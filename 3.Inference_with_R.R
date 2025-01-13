@@ -82,7 +82,6 @@ img[,,3][m] <- 0
 grid.newpage()
 grid.raster(img, interpolate=TRUE)
 
-# TODO remeasure with scikit image (there does not seem to be anything in R)
 
 # Send a zip file
 # zip only a few images for this test (otherwise the server may time out)
