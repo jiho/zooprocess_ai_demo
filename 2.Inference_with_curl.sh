@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Call the modules' API from shell scripts, through curl
+#
+# (c) 2025 Jean-Olivier Irisson, GNU General Public License v3
 
 ## Classifier ----
 
