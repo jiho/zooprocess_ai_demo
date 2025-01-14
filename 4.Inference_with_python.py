@@ -97,7 +97,7 @@ img = io.imread(images[0], as_gray=True)
 # plot it
 plt.imshow(img, cmap='gray', vmin=0, vmax=1); plt.show()
 
-# white out the pixels corresponding to the separation line
+# white-out the pixels corresponding to the separation line
 coords = tuple(r_sep['predictions'][0]['separation_coordinates'])
 img[coords] = 1
 plt.imshow(img, cmap='gray', vmin=0, vmax=1); plt.show()
@@ -130,6 +130,7 @@ props = regionprops_table(label_image=img_lab, intensity_image=img,
 # convert it into a table and clean the very small objects (compression noise)
 import pandas as pd
 props_df = pd.DataFrame(props)
+props_df
 props_df = props_df.query("area > 10")
 props_df
 
@@ -140,4 +141,3 @@ props_df
 # by drawing the white lines on a black background in the original position of
 # each image. Then ZooProcess cand be re-run and will extract properties 
 # completely compatible with the other images.
-
