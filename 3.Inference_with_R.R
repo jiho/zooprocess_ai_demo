@@ -14,7 +14,7 @@ images <- list.files("images", full.names=TRUE)
 ## Classifier ----
 
 # Send a single image
-r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/") |>
+r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/") |>
   # add parameter
   req_url_query(bottom_crop=31) |>
   # set type of query (this is a POST since there is a body)
@@ -36,7 +36,7 @@ r_clas
 zip(zipfile="images.zip", files=images, flags="-jX0")
 
 # make the same query but with the zip file
-r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/") |>
+r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/") |>
   req_url_query(bottom_crop=31) |>
   req_method("POST") |>
   # explicitly specify the type as application/zip to make sure it is understood correctly
@@ -50,7 +50,7 @@ resp_body_json(r, simplifyVector=TRUE)
 ## Separator ----
 
 # Single image
-r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-separator/exposed/v2/models/zooprocess_multiple_separator/predict/") |>
+r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-separator/exposed/main/v2/models/zooprocess_multiple_separator/predict/") |>
   # there is now one more argument to specify
   req_url_query(min_mask_score=0.9, bottom_crop=31) |>
   req_method("POST") |>
@@ -88,13 +88,13 @@ grid.raster(img, interpolate=TRUE)
 zip(zipfile="images_few.zip", files=images[1:3], flags="-jX0")
 
 # make the same query but with the zip file
-r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-separator/exposed/v2/models/zooprocess_multiple_separator/predict/") |>
+r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-separator/exposed/main/v2/models/zooprocess_multiple_separator/predict/") |>
   req_url_query(min_mask_score=0.9, bottom_crop=31) |>
   req_method("POST") |>
   req_body_multipart(images = curl::form_file("images_few.zip", type="application/zip")) |>
   req_perform()
 
-resp_body_json(res_seps, simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=TRUE)
+resp_body_json(r, simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=TRUE)
 # several (3 here) "predictions" elements
 
 
@@ -108,7 +108,7 @@ classify <- function(file) {
     type <- NULL
     # will be inferred
   }
-  r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/") |>
+  r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/") |>
     req_url_query(bottom_crop=31) |>
     req_method("POST") |>
     req_body_multipart(images = curl::form_file(file, type=type)) |>

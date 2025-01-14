@@ -13,7 +13,7 @@ import requests
 
 def walton_url(model):
   """Return the URL of the given model on the Walton cluster"""
-  return 'https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-'+model+'/exposed/v2/models/zooprocess_multiple_'+model+'/predict/'
+  return 'https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-'+model+'/exposed/main/v2/models/zooprocess_multiple_'+model+'/predict/'
 walton_url('foo')
 
 # call the classifier with the first image

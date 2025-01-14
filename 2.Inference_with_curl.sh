@@ -10,21 +10,21 @@
 # 2. change the path to point to the file on your local drive
 # 3. execute the command in a shell
 curl -X 'POST' \
-  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
+  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -F 'images=@images/s_8077.jpg;type=image/jpeg'
 
 # we can actually drop some headers and type, and it still works
 curl -X 'POST' \
-  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
+  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
   -F 'images=@images/s_8077.jpg'
 
 # now put that in a loop
 for img in $(ls images/)
 do
   curl -X 'POST' \
-    'https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
+    'https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
     -F "images=@images/$img"
   # NB: you need double quotes for the variable $img to be interpreted
 done
@@ -40,7 +40,7 @@ zip -jX0 images.zip images/*.jpg
 
 # copy the command when uploading a zip
 curl -X 'POST' \
-  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-classifier/exposed/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
+  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/?bottom_crop=31' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -F 'images=@images.zip;type=application/zip' # note the change of type
@@ -50,7 +50,7 @@ curl -X 'POST' \
 
 # exactly the same
 curl -X 'POST' \
-  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooscan-multiple-separator/exposed/v2/models/zooprocess_multiple_separator/predict/?min_mask_score=0.9&bottom_crop=31' \
+  'https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-separator/exposed/main/v2/models/zooprocess_multiple_separator/predict/?min_mask_score=0.9&bottom_crop=31' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -F 'images=@images/s_8077.jpg;type=image/jpeg'
