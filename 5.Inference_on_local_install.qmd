@@ -1,0 +1,129 @@
+---
+title: "Inference from local install"
+format:
+    html:
+       toc: true
+       toc-location: right
+       fontsize: 0.8em
+---
+
+## Installation
+
+### Preparation
+
+Prepare a conda environment, to isolate the dependencies from the rest of your work. NB: the code is tested with Python 3.12 so let's use this version.
+
+```{}
+conda create --name zooprocess_multiple python=3.12
+conda activate zooprocess_multiple
+```
+
+### Classifier
+
+Download the code and install the dependencies for the classifier module
+
+```{}
+git clone https://github.com/ai4os-hub/zooprocess-multiple-classifier
+cd zooprocess-multiple-classifier
+pip install -e .
+```
+
+Fetch the model weights from the first gihub release and move them in the appropriate location
+
+```{}
+wget https://github.com/ai4os-hub/zooprocess-multiple-classifier/releases/download/v1.0.0/best_model-2024-07-29_21-23-29.pt
+mv best_model-2024-07-29_21-23-29.pt models/
+```
+
+Run the classification service
+
+```{}
+deepaas-run
+```
+
+Now browse to <http://127.0.0.1:5000> and you should get the metadata page, or to <http://127.0.0.1:5000/api> and you should get the UI of the API. Once you have checked that everything works, you can stop the service (with `Ctrl+C`).
+
+### Separator
+
+Since the classifier and the separator have very similar dependencies and are intended to work together, we will use the same conda environment.
+
+Move back out of the classifier code, download the separator code and install its dependencies
+
+```{}
+cd ..
+git clone https://github.com/ai4os-hub/zooprocess-multiple-separator
+cd zooprocess-multiple-separator
+pip install -e .
+```
+
+As before, fetch the model weights and move them
+
+```{}
+wget https://github.com/ai4os-hub/zooprocess-multiple-separator/releases/download/v1.0.0/learn_plankton_pano_plus5000_8epoch.zip
+mv learn_plankton_pano_plus5000_8epoch.zip models/
+```
+
+Now there are two modules installed and, to run the service, one needs to specify that we want to run the separator model
+
+```{}
+deepaas-run --model-name zooprocess_multiple_separator
+```
+
+Now browse to <http://127.0.0.1:5000/api> and check that everything works; stop the service (with `Ctrl+C`).
+
+### Run both
+
+To run both modules in parallel, they should be run in different shells with different ports. Open two new shells and type
+
+```{}
+conda activate zooprocess_multiple
+deepaas-run --listen-port 5000 --model-name zooprocess_multiple_classifier
+```
+
+```{}
+conda activate zooprocess_multiple
+deepaas-run --listen-port 5001 --model-name zooprocess_multiple_separator
+```
+
+And you can find the classifier at <http://127.0.0.1:5000/api> and the separator at <http://127.0.0.1:5001/api>
+
+## Process some images
+
+We proceed exactly as before but with the local URL, including the correct port.
+
+### In R
+
+```{r}
+library("httr2")
+library("curl")
+request("http://127.0.0.1:5000/v2/models/zooprocess_multiple_classifier/predict/") |>
+  req_url_query(bottom_crop=31) |>
+  req_method("POST") |>
+  req_body_multipart(images=form_file("images/m_1245.jpg")) |> 
+  req_perform() |> 
+  resp_body_json(simplifyVector=TRUE)
+
+request("http://127.0.0.1:5001/v2/models/zooprocess_multiple_separator/predict/") |>
+  req_url_query(min_mask_score=0.9, bottom_crop=31) |>
+  req_method("POST") |>
+  req_body_multipart(images=form_file("images/m_1245.jpg")) |>
+  req_perform() |> 
+  resp_body_json(simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=TRUE)
+```
+
+### In Python
+
+```{python}
+import requests
+
+r = requests.post('http://127.0.0.1:5000/v2/models/zooprocess_multiple_classifier/predict/',
+      params={'bottom_crop': 31},
+      files={'images': open('images/m_1245.jpg', 'rb')})
+r.json()
+
+r = requests.post('http://127.0.0.1:5001/v2/models/zooprocess_multiple_separator/predict/',
+      params={'min_mask_score':0.9, 'bottom_crop': 31},
+      files={'images': open('images/m_1245.jpg', 'rb')})
+r.json()
+```
+
