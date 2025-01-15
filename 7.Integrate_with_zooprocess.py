@@ -26,11 +26,19 @@ from PIL import Image
 import numpy as np
 from matplotlib import pyplot as plt
 
-## 1. Read a full scan ----
+## 0. Settings ----
 
-# path to a scan inside a ZooProcess project
+# path to a scan inside a ZooProcess project, in Zooscan_Scan/_work/
 scan = '/Users/jiho/Desktop/jb19900214_tot_1/'
-# NB: must end with '/'
+# NB: . Adjust to fit your system
+#     . Must end with '/'
+
+base_url = 'http://marie.obs-vlfr.fr'
+# NB: . Adjust to the URL of the server you installed the modules on
+#     . The rest of the code assumes that the classifier is on port 5000
+#       and the separator on port 5001
+
+## 1. Read a full scan ----
 
 # get the scan ID from the path
 scan_id = scan.split("/")[-2]
@@ -92,7 +100,6 @@ with zipfile.ZipFile('scan_full.zip', 'w') as zipf:
     zipf.write(os.path.join(tmp_dir.name, str(i) + '.png'), str(i)+'.png')
 
 # send the zip to be classified through the API
-base_url = 'http://marie.obs-vlfr.fr'
 r = requests.post(base_url+':5000'+'/v2/models/zooprocess_multiple_classifier/predict/',
       params={'bottom_crop': 0},
       files={'images': ('scan_full.zip', open('scan_full.zip', 'rb'), 'application/zip')})
