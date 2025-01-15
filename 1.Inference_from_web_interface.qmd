@@ -1,4 +1,11 @@
-# Perform inference from the deepaas API interface
+---
+title: "Inference from the deepaas API interface"
+format:
+    html:
+       toc: true
+       toc-location: right
+       fontsize: 0.8em
+---
 
 ## Classifier
 
