@@ -5,6 +5,7 @@
 
 
 library("httr2")
+library("curl")
 library("tidyverse")
 
 # list example image files
@@ -20,7 +21,7 @@ r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zoopr
   # set type of query (this is a POST since there is a body)
   req_method("POST") |>
   # upload the image
-  req_body_multipart(images=curl::form_file(images[1])) |>
+  req_body_multipart(images=form_file(images[1])) |>
   # perform the request
   req_perform()
 
@@ -40,7 +41,7 @@ r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zoopr
   req_url_query(bottom_crop=31) |>
   req_method("POST") |>
   # explicitly specify the type as application/zip to make sure it is understood correctly
-  req_body_multipart(images = curl::form_file("images.zip", type="application/zip")) |>
+  req_body_multipart(images=form_file("images.zip", type="application/zip")) |>
   req_perform()
 
 resp_body_json(r, simplifyVector=TRUE)
@@ -54,7 +55,7 @@ r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zoopr
   # there is now one more argument to specify
   req_url_query(min_mask_score=0.9, bottom_crop=31) |>
   req_method("POST") |>
-  req_body_multipart(images = curl::form_file(images[1])) |>
+  req_body_multipart(images=form_file(images[1])) |>
   req_perform()
 
 # parse the result (more options to get the data in the correct shape)
@@ -91,7 +92,7 @@ zip(zipfile="images_few.zip", files=images[1:3], flags="-jX0")
 r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-separator/exposed/main/v2/models/zooprocess_multiple_separator/predict/") |>
   req_url_query(min_mask_score=0.9, bottom_crop=31) |>
   req_method("POST") |>
-  req_body_multipart(images = curl::form_file("images_few.zip", type="application/zip")) |>
+  req_body_multipart(images=form_file("images_few.zip", type="application/zip")) |>
   req_perform()
 
 resp_body_json(r, simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=TRUE)
@@ -111,7 +112,7 @@ classify <- function(file) {
   r <- request("https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/v2/models/zooprocess_multiple_classifier/predict/") |>
     req_url_query(bottom_crop=31) |>
     req_method("POST") |>
-    req_body_multipart(images = curl::form_file(file, type=type)) |>
+    req_body_multipart(images=form_file(file, type=type)) |>
     req_perform()
 
   r <- resp_body_json(r, simplifyVector=TRUE)
