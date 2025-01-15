@@ -15,9 +15,9 @@ Install it from [Docker](https://www.docker.com).
 
 In the Docker Hub tab, search for "ai4oshub/zooprocess". Then, for each module, click `Pull`. It will automatically fetch the code, all its dependencies, the weights etc. In total, it is 8-9GB of data that should be downloaded so it can be a bit long. 
 
-Once the images are pulled, you will find them in the Images tab. From there, click the `️▷` button to run them. In the Optional settings that come up, pick a port to map the the port :5000/tcp from inside the docker. This will be the port at which the service will become available on the machine running Docker; let us pick 50,000 for the classifier and 50,001 for the separator. You should see the output of the deepaas service being readied.
 ![](assets/Docker_search.png)
 
+Once the images are pulled, you will find them in the Images tab. From there, click the `️▷` button to run them. In the Optional settings that come up, pick a port to map the the port :5000/tcp from inside the docker. This will be the port at which the service will become available on the machine running Docker; let us pick 50,000 for the classifier and 50,001 for the separator. You should see the output of the DEEPaaS service being readied.
 
 ![](assets/Docker_images.png)
 
@@ -43,7 +43,7 @@ docker pull ai4oshub/zooprocess-multiple-classifier:latest
 docker pull ai4oshub/zooprocess-multiple-separator:latest
 ```
 
-Once they are available, run them while mapping the deepaas API port to a port on the machine running Docker. Use different ports for the classifier and the separator
+Once they are available, run them while mapping the DEEPaaS API port to a port on the machine running Docker. Use different ports for the classifier and the separator
 
 ```{}
 docker run -p 50000:5000 ai4oshub/zooprocess-multiple-classifier:latest

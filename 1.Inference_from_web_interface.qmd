@@ -1,5 +1,5 @@
 ---
-title: "Inference from the deepaas API interface"
+title: "Inference from the DEEPaaS API interface"
 format:
     html:
        toc: true
@@ -9,7 +9,7 @@ format:
 
 ## Classifier
 
-Browse to the API exposed by the deepaas service <https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/api>
+Browse to the API exposed by the DEEPaaS service <https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/api>
 
 All endpoints (i.e. functions) are described and you can try them, directly in the browser. For example, to get information about what the service does, you can get the metadata from the [`GET /v2/models/zooprocess_multiple_classifier/`](https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-classifier/exposed/main/api#/models/get_system_services_zooprocess_multiple_classifier_exposed_main_v2_models_) endpoint. Click "Try it out" and then "Execute".
 
