@@ -16,10 +16,18 @@ Install it from [Docker](https://www.docker.com).
 In the Docker Hub tab, search for "ai4oshub/zooprocess". Then, for each module, click `Pull`. It will automatically fetch the code, all its dependencies, the weights etc. In total, it is 8-9GB of data that should be downloaded so it can be a bit long. 
 
 Once the images are pulled, you will find them in the Images tab. From there, click the `️▷` button to run them. In the Optional settings that come up, pick a port to map the the port :5000/tcp from inside the docker. This will be the port at which the service will become available on the machine running Docker; let us pick 50,000 for the classifier and 50,001 for the separator. You should see the output of the deepaas service being readied.
+![](assets/Docker_search.png)
+
+
+![](assets/Docker_images.png)
+
+<img src="assets/Docker_images_run.png" alt="options" width="300"/>
 
 Browse to <http://localhost:50000/api> and <http://localhost:50001/api> to check.
 
 Once you are finished, go to the Containers tab and stop the containers with the `□` button.
+
+![](assets/Docker_containers.png)
 
 
 ### Command line
