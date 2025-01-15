@@ -93,7 +93,6 @@ with zipfile.ZipFile('scan_full.zip', 'w') as zipf:
 
 # send the zip to be classified through the API
 base_url = 'http://marie.obs-vlfr.fr'
-base_url = 'http://localhost'
 r = requests.post(base_url+':5000'+'/v2/models/zooprocess_multiple_classifier/predict/',
       params={'bottom_crop': 0},
       files={'images': ('scan_full.zip', open('scan_full.zip', 'rb'), 'application/zip')})
