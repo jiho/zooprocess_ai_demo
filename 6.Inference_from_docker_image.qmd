@@ -1,0 +1,92 @@
+---
+title: "Inference from the docker image"
+format:
+    html:
+       toc: true
+       toc-location: right
+       fontsize: 0.8em
+---
+
+## Installation
+
+### Docker Desktop
+
+Install it from [Docker](https://www.docker.com).
+
+In the Docker Hub tab, search for "ai4oshub/zooprocess". Then, for each module, click `Pull`. It will automatically fetch the code, all its dependencies, the weights etc. In total, it is 8-9GB of data that should be downloaded so it can be a bit long. 
+
+Once the images are pulled, you will find them in the Images tab. From there, click the `️▷` button to run them. In the Optional settings that come up, pick a port to map the the port :5000/tcp from inside the docker. This will be the port at which the service will become available on the machine running Docker; let us pick 50,000 for the classifier and 50,001 for the separator. You should see the output of the deepaas service being readied.
+
+Browse to <http://localhost:50000/api> and <http://localhost:50001/api> to check.
+
+Once you are finished, go to the Containers tab and stop the containers with the `□` button.
+
+
+### Command line
+
+Follow the [guide to install Docker Engine](https://docs.docker.com/engine/install/).
+
+Browse the docker images released on DockerHub for the classifier <https://hub.docker.com/r/ai4oshub/zooprocess-multiple-classifier/tags> and the separator <https://hub.docker.com/r/ai4oshub/zooprocess-multiple-separator/tags>.
+
+Pull the two images
+
+```{}
+docker pull ai4oshub/zooprocess-multiple-classifier:latest
+docker pull ai4oshub/zooprocess-multiple-separator:latest
+```
+
+Once they are available, run them while mapping the deepaas API port to a port on the machine running Docker. Use different ports for the classifier and the separator
+
+```{}
+docker run -p 50000:5000 ai4oshub/zooprocess-multiple-classifier:latest
+docker run -p 50001:5000 ai4oshub/zooprocess-multiple-separator:latest
+```
+
+Browse to <http://localhost:50000/api> and <http://localhost:50001/api> to check.
+
+To stop the containers, get their unique ID with `docker ps` and then
+
+```{}
+(sudo) docker stop CONTAINER_ID
+```
+
+
+## Inference
+
+Exactly as with a local install, we use the same code but with the appropriate URL and ports.
+
+### In R
+
+```{r}
+library("httr2")
+library("curl")
+request("http://127.0.0.1:50000/v2/models/zooprocess_multiple_classifier/predict/") |>
+  req_url_query(bottom_crop=31) |>
+  req_method("POST") |>
+  req_body_multipart(images=form_file("images/m_1245.jpg")) |> 
+  req_perform() |> 
+  resp_body_json(simplifyVector=TRUE)
+
+request("http://127.0.0.1:50001/v2/models/zooprocess_multiple_separator/predict/") |>
+  req_url_query(min_mask_score=0.9, bottom_crop=31) |>
+  req_method("POST") |>
+  req_body_multipart(images=form_file("images/m_1245.jpg")) |>
+  req_perform() |> 
+  resp_body_json(simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=TRUE)
+```
+
+### In Python
+
+```{python}
+import requests
+
+r = requests.post('http://127.0.0.1:50000/v2/models/zooprocess_multiple_classifier/predict/',
+      params={'bottom_crop': 31},
+      files={'images': open('images/m_1245.jpg', 'rb')})
+r.json()
+
+r = requests.post('http://127.0.0.1:50001/v2/models/zooprocess_multiple_separator/predict/',
+      params={'min_mask_score':0.9, 'bottom_crop': 31},
+      files={'images': open('images/m_1245.jpg', 'rb')})
+r.json()
+```
