@@ -99,7 +99,7 @@ resp_body_json(r, simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=T
 # several (3 here) "predictions" elements
 
 
-## Performance comparison ----
+## Performance comparison between individual and zip ----
 
 classify <- function(file) {
   file_extension <- tools::file_ext(file)
@@ -122,5 +122,39 @@ classify <- function(file) {
 system.time(all <- map(images, classify))
 system.time(all <- classify("images.zip"))
 
-# system.time(all <- classify("sample.zip"))
-# # ~30s for 1330 images!
+
+## Test and display separation on a few images ----
+
+separate <- function(file) {
+  # define base URL: on Walton or on a local server
+  base_url <- "https://inference-walton.cloud.imagine-ai.eu/system/services/zooprocess-multiple-separator/exposed/main/"
+  base_url <- "http://marie.obs-vlfr.fr:5001"
+  base_url <- "http://localhost:5001"
+  # run the separation
+  r <- request(str_c(base_url, "/v2/models/zooprocess_multiple_separator/predict/")) |>
+    req_url_query(min_mask_score=0.9, bottom_crop=31) |>
+    req_method("POST") |>
+    req_body_multipart(images=form_file(file)) |>
+    req_perform()
+
+  # parse the result
+  r_sep <- resp_body_json(r, simplifyVector=TRUE, simplifyDataFrame=FALSE, simplifyMatrix=TRUE)
+  r_sep <- r_sep$predictions[[1]]
+
+  # display the separation line on the image
+  img <- readJPEG(file)
+
+  m <- t(r_sep$separation_coordinates)+1
+  img[,,1][m] <- 1
+  img[,,2][m] <- 0
+  img[,,3][m] <- 0
+
+  grid.newpage()
+  grid.raster(img, interpolate=TRUE)
+  return(invisible(img))
+}
+separate("images/m_2886.jpg")
+separate("images/m_8925.jpg")
+separate("images/m_3566.jpg")
+
+
