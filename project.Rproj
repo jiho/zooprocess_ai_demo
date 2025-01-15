@@ -14,3 +14,7 @@ LaTeX: pdfLaTeX
 
 AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
+
+PythonType: conda
+PythonVersion: 3.12.8
+PythonPath: /opt/homebrew/Caskroom/miniconda/base/envs/zooprocess_multiple/bin/python3.12
